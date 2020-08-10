@@ -17,4 +17,8 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService) {
         }
         return false
     }
+
+    fun uploadPhoto() {
+        fireBaseService.upLoadPhoto()
+    }
 }
