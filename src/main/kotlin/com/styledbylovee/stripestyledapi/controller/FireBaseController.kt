@@ -17,10 +17,4 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
     fun uploadPhoto() {
         fireBaseManager.uploadPhoto()
     }
-
-//    @GetMapping(path = ["/getZipCodes"])
-//    fun getZipCodes(): MutableIterable<ActiveZipCode> {
-//        val zipCodes = activeZipCodeManager.getZipCodes()
-//        return zipCodes
-//    }
 }

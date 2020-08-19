@@ -11,9 +11,7 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService) {
         val zipCodeList = fireBaseService.getZipCodes()
 
         zipCodeList!!.forEach {
-            if (it == zipCode) {
-                return true
-            }
+            if (it == zipCode) return true
         }
         return false
     }
