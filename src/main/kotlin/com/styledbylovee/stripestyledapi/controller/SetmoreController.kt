@@ -49,5 +49,6 @@ class SetmoreController(@Autowired val setmoreManager: SetmoreManager) {
 
     @GetMapping("/updateAppointment")
     fun updateAppointment() {
+
     }
 }
