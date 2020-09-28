@@ -13,8 +13,4 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
          return fireBaseManager.findZipCode(zipCode)
     }
 
-    @GetMapping("/uploadPhoto")
-    fun uploadPhoto() {
-        fireBaseManager.uploadPhoto()
-    }
 }
