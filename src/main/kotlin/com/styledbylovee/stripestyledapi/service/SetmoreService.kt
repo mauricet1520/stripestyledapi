@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.auth.oauth2.AccessToken
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentResponse
+import com.styledbylovee.stripestyledapi.model.setmore.appointment.UpdateAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.customer.CreateCustomerRequest
 import com.styledbylovee.stripestyledapi.model.setmore.customer.CreateCustomerResponse
 import com.styledbylovee.stripestyledapi.model.setmore.services.FetchAllServicesResponse
@@ -251,13 +252,71 @@ class SetmoreService(
 
             logger.info("Calling Services Endpoint $createAppointmentUrl")
 
-            val response = restTemplate.exchange(createAppointmentUrl, HttpMethod.POST, entity, CreateAppointmentResponse::class.java)
+            try {
+
+                val response = restTemplate.exchange(createAppointmentUrl, HttpMethod.POST, entity, CreateAppointmentResponse::class.java)
+
+                logger.info("CreateAppointmentResponse Status Code: ${response.statusCode} Value: ${response.statusCodeValue}")
+
+                response.body!!
+            }catch (h: HttpClientErrorException) {
+                logger.error(h.message, h)
+                throw h
+            }
+
+
+        }
+        catch (x: Exception) {
+            logger.error("Failure creating Appointment", x)
+
+            throw Throwable(x)
+        }
+
+    }
+
+    fun updateAppointment(token: String, createAppointmentRequest: CreateAppointmentRequest): CreateAppointmentResponse {
+
+        logger.info("Method: updateAppointment token $token")
+
+        val updateAppointmentUrl = "https://developer.setmore.com/api/v1/bookingapi/appointments/${createAppointmentRequest.appointmentKey}/label"
+
+        return try {
+            val headers = HttpHeaders()
+
+            headers.add("Authorization", "Bearer $token")
+
+            val entity = HttpEntity<Any>(createAppointmentRequest, headers)
+
+            logger.info("Calling Services Endpoint $updateAppointmentUrl")
+
+            val response = restTemplate.exchange(updateAppointmentUrl, HttpMethod.PUT, entity, CreateAppointmentResponse::class.java)
 
             logger.info("CreateAppointmentResponse Status Code: ${response.statusCode} Value: ${response.statusCodeValue}")
 
             response.body!!
+
+        } catch (e: HttpClientErrorException) {
+            logger.error("Failure when calling update appointment endpoint", e)
+
+            val refreshTokenResponse = refreshToken()
+
+            val freshToken = refreshTokenResponse.data.token.accessToken
+
+            val headers = HttpHeaders()
+
+            headers.add("Authorization", "Bearer $freshToken")
+
+            val entity = HttpEntity<Any>(createAppointmentRequest, headers)
+
+            logger.info("Calling Services Endpoint $updateAppointmentUrl")
+
+            val response = restTemplate.exchange(updateAppointmentUrl, HttpMethod.PUT, entity, CreateAppointmentResponse::class.java)
+
+            logger.info("UpdateAppointmentResponse Status Code: ${response.statusCode} Value: ${response.statusCodeValue}")
+
+            response.body!!
         } catch (x: Exception) {
-            logger.error("Failure creating Appointment", x)
+            logger.error("Failure updating Appointment", x)
 
             return CreateAppointmentResponse(response = false)
         }

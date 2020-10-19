@@ -18,8 +18,9 @@ class StripeController(@Autowired val stripeManager: StripeManager) {
     }
 
     @PostMapping("/createCharge")
-    fun createCharge(@RequestBody stripeRequest: StripeRequest): ResponseEntity<Any> {
-        stripeManager.createCharge(stripeRequest)
-        return ResponseEntity(HttpStatus.NO_CONTENT)
+    fun createCharge(@RequestBody stripeRequest: StripeRequest): ResponseEntity<Any> = try {
+        ResponseEntity(stripeManager.createCharge(stripeRequest), HttpStatus.OK)
+    } catch (t: Throwable) {
+        ResponseEntity(t.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

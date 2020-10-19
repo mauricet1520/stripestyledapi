@@ -3,6 +3,8 @@ package com.styledbylovee.stripestyledapi.controller
 import com.styledbylovee.stripestyledapi.manager.SetmoreManager
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentResponse
+import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
+import com.styledbylovee.stripestyledapi.model.setmore.appointment.UpdateAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.customer.CreateCustomerRequest
 import com.styledbylovee.stripestyledapi.model.setmore.customer.CreateCustomerResponse
 import com.styledbylovee.stripestyledapi.model.setmore.services.FetchAllServicesResponse
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.HttpClientErrorException
 
 @RestController
 class SetmoreController(@Autowired val setmoreManager: SetmoreManager) {
@@ -47,8 +50,15 @@ class SetmoreController(@Autowired val setmoreManager: SetmoreManager) {
         return setmoreManager.createAppointment(createAppointmentRequest)
     }
 
-    @GetMapping("/updateAppointment")
-    fun updateAppointment() {
+    @PutMapping("/updateAppointment")
+    fun updateAppointment(@RequestBody createAppointmentRequest: CreateAppointmentRequest): CreateAppointmentResponse {
+        return setmoreManager.updateAppointment(createAppointmentRequest)
+    }
 
+    @PostMapping("createSetmoreCustomerAppointment")
+    fun createCustomerAppointment(@RequestBody styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest): ResponseEntity<Any> = try {
+         ResponseEntity(setmoreManager.createCustomerAppointment(styledCustomerAppointmentRequest), HttpStatus.OK)
+    }catch (h: HttpClientErrorException) {
+        ResponseEntity(h.responseBodyAsString, h.statusCode)
     }
 }

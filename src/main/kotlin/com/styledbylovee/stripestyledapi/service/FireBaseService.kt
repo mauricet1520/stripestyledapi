@@ -2,6 +2,7 @@ package com.styledbylovee.stripestyledapi.service
 
 import com.google.auth.oauth2.AccessToken
 import com.google.cloud.storage.*
+import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.token.RefreshTokenResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +26,7 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         return restTemplate.getForObject("https://styled-by-love-e-qa.firebaseio.com/zipCodes.json?access_token=${accessToken.tokenValue}", List::class.java)
     }
 
+
     fun getAccessToken(): RefreshTokenResponse {
         var fireBaseDatabaseAccessTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/accessToke.json?access_token="
 
@@ -37,9 +39,18 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
 
         var fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/accessToke.json?access_token="
 
-        logger.info("Calling FetchAllServices Endpoint $fireBaseDatabaseSaveTokenUrl")
+        logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
 
         restTemplate.exchange(fireBaseDatabaseSaveTokenUrl + accessToken.tokenValue, HttpMethod.PUT, HttpEntity(refreshTokenResponse!!), String::class.java)
+    }
+
+    fun saveSetmoreCustomerAppointment(styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest) {
+
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/appointments.json?access_token=${accessToken.tokenValue}"
+
+        logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
+
+        restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(styledCustomerAppointmentRequest), StyledCustomerAppointmentRequest::class.java)
     }
 
     fun upLoadPhoto() {
