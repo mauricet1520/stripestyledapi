@@ -2,6 +2,7 @@ package com.styledbylovee.stripestyledapi.service
 
 import com.google.auth.oauth2.AccessToken
 import com.google.cloud.storage.*
+import com.styledbylovee.stripestyledapi.model.FirebaseAppointment
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.token.RefreshTokenResponse
 import org.slf4j.LoggerFactory
@@ -55,6 +56,16 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
 
     fun upLoadPhoto() {
         UploadObject.uploadObject("styled-by-love-e-qa", "styled-by-love-e-qa.appspot.com", "final", "src/main/resources/static/feel_confident.jpg")
+    }
+
+    fun saveAppointment(firebaseAppointment: FirebaseAppointment) {
+
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/customer_appointments.json?access_token=${accessToken.tokenValue}"
+
+        logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
+
+        restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(firebaseAppointment), StyledCustomerAppointmentRequest::class.java)
+
     }
 
     object UploadObject {
