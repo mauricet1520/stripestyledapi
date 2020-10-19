@@ -1,5 +1,6 @@
 package com.styledbylovee.stripestyledapi.manager
 
+import com.styledbylovee.stripestyledapi.model.FirebaseAppointment
 import com.styledbylovee.stripestyledapi.service.FireBaseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -14,6 +15,10 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService) {
             if (it == zipCode) return true
         }
         return false
+    }
+
+    fun saveAppointment(appointment: FirebaseAppointment) {
+        return fireBaseService.saveAppointment(appointment)
     }
 
     fun uploadPhoto() {
