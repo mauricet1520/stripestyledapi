@@ -17,5 +17,7 @@ data class CreateAppointmentRequest (
     @JsonProperty("comment")
     var comment: String? = null,
     @JsonProperty("label")
-    var label: String? = null
+    var label: String,
+    @JsonProperty("appointmentKey")
+    var appointmentKey: String? = null
 )

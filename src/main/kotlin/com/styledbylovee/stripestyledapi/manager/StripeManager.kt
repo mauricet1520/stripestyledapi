@@ -3,8 +3,10 @@ package com.styledbylovee.stripestyledapi.manager
 import com.stripe.Stripe
 import com.stripe.model.*
 import com.styledbylovee.stripestyledapi.model.StripeRequest
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpClientErrorException
 import java.util.*
 
 
@@ -12,6 +14,9 @@ import java.util.*
 class StripeManager(@Value(value = "\${stripeKey}") val stripeApiKey: String,
                     @Value(value = "\${subscriptionAmount}") val subscriptionAmount: Int,
                     @Value(value = "\${onDemandAmount}") val onDemandAmount: Int) {
+
+
+    val logger = LoggerFactory.getLogger("StripeManager")
 
     fun createSubscription(stripeRequest: StripeRequest): String {
 
@@ -65,17 +70,22 @@ class StripeManager(@Value(value = "\${stripeKey}") val stripeApiKey: String,
         customer.sources.create(params) as Card
     }
 
-    fun createCharge(stripeRequest: StripeRequest) {
+    fun createCharge(stripeRequest: StripeRequest): String = try{
+        logger.info("StripeRequest: $stripeRequest")
+
         Stripe.apiKey = stripeApiKey
 
         val params: MutableMap<String, Any> = HashMap()
-        params["amount"] = onDemandAmount
+        params["amount"] = stripeRequest.amount
         params["currency"] = "usd"
         params["source"] = stripeRequest.token
         params["receipt_email"] = stripeRequest.receipt_email
-        params["description"] = "On Demand Charge"
+        params["description"] = "Service: ${stripeRequest.service}"
         Charge.create(params)
-        createCustomer(stripeRequest.receipt_email)
+        createCustomer(stripeRequest.receipt_email).id
+    } catch (h: Throwable) {
+        logger.error(h.message, h)
+        throw h
     }
 
 }

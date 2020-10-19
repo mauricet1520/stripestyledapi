@@ -2,6 +2,8 @@ package com.styledbylovee.stripestyledapi.manager
 
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentResponse
+import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
+import com.styledbylovee.stripestyledapi.model.setmore.appointment.UpdateAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.customer.CreateCustomerRequest
 import com.styledbylovee.stripestyledapi.model.setmore.customer.CreateCustomerResponse
 import com.styledbylovee.stripestyledapi.model.setmore.services.FetchAllServicesResponse
@@ -117,17 +119,34 @@ class SetmoreManager(@Autowired val setmoreService: SetmoreService, @Autowired v
         return listOfStaffTimeSlots
     }
 
-    fun createSetmoreCustomer(createCustomerRequest: CreateCustomerRequest): CreateCustomerResponse {
+    fun createSetmoreCustomer(createCustomerRequest: CreateCustomerRequest?): CreateCustomerResponse {
 
         val globalToken = setmoreService.getAccessTokenIfFireBase().data.token.accessToken!!
 
-       return setmoreService.createSetmoreCustomer(globalToken, createCustomerRequest)
+       return setmoreService.createSetmoreCustomer(globalToken, createCustomerRequest!!)
     }
 
-    fun createAppointment(createAppointmentRequest: CreateAppointmentRequest): CreateAppointmentResponse {
+    fun createAppointment(createAppointmentRequest: CreateAppointmentRequest): CreateAppointmentResponse = try {
 
         val globalToken = setmoreService.getAccessTokenIfFireBase().data.token.accessToken!!
 
-        return setmoreService.createAppointment(globalToken, createAppointmentRequest)
+         setmoreService.createAppointment(globalToken, createAppointmentRequest)
+
+    }catch (h: HttpClientErrorException) {
+        throw h
+    }
+
+    fun updateAppointment(createAppointmentRequest: CreateAppointmentRequest): CreateAppointmentResponse{
+        val globalToken = setmoreService.getAccessTokenIfFireBase().data.token.accessToken!!
+
+        return setmoreService.updateAppointment(globalToken, createAppointmentRequest)
+    }
+
+    fun createCustomerAppointment(styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest): CreateAppointmentResponse = try {
+        val createCustomerResponse = createSetmoreCustomer(styledCustomerAppointmentRequest.createCustomerRequest)
+        fireBaseService.saveSetmoreCustomerAppointment(styledCustomerAppointmentRequest)
+        createAppointment(styledCustomerAppointmentRequest.createAppointmentRequest!!)
+    } catch (h: HttpClientErrorException) {
+        throw h
     }
 }
