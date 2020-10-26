@@ -3,6 +3,7 @@ package com.styledbylovee.stripestyledapi.controller
 import com.styledbylovee.stripestyledapi.manager.FireBaseManager
 import com.styledbylovee.stripestyledapi.model.ActiveZipCode
 import com.styledbylovee.stripestyledapi.model.FirebaseAppointment
+import com.styledbylovee.stripestyledapi.model.Product
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
@@ -17,6 +18,11 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
     @PostMapping("/appointment")
     fun addAppointment(@RequestBody firebaseAppointment: FirebaseAppointment) {
         return fireBaseManager.saveAppointment(firebaseAppointment)
+    }
+
+    @PostMapping("/product")
+    fun addProduct(@RequestBody product: Product) {
+        return fireBaseManager.saveProduct(product)
     }
 
 }
