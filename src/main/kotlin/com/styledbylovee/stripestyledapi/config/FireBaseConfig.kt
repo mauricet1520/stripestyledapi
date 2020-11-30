@@ -16,6 +16,7 @@ import java.io.FileInputStream
 class FireBaseConfig {
     @Bean
     fun initFireBase(): AccessToken {
+
         val serviceAccount = FileInputStream("src/main/resources/static/styled-by-love-e-qa-firebase-adminsdk-creds.json")
 
         val googleCred = GoogleCredentials.fromStream(serviceAccount)
