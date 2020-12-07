@@ -7,23 +7,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.io.ByteArrayInputStream
+import java.io.InputStream
 
 @Configuration
 class GoogleCloudConfiguration(
-        @Value(value = "\${gcp.privateKey}") val privateKey: String,
-        @Value(value = "\${gcp.projectId}") val projectId: String)
+        @Value(value = "\${privateKey}") val privateKey: String,
+        @Value(value = "\${projectId}") val projectId: String)
 {
 
-    fun getGoogleCreds(): GoogleCredentials{
-        return GoogleCredentials.fromStream(ByteArrayInputStream(getCreds().toJson()))
+    fun getGoogleCreds(inputStream: InputStream): GoogleCredentials{
+        return GoogleCredentials.fromStream(inputStream)
     }
-
-    @Bean
-    fun getCreds(): GoogleCloudCredentials {
-        return GoogleCloudCredentials(
-                privateKey = privateKey,
-                projectId = projectId
-        )
-    }
-
 }

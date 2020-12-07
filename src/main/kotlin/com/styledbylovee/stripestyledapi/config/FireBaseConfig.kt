@@ -23,20 +23,23 @@ class FireBaseConfig {
     lateinit var googleCloudConfiguration: GoogleCloudConfiguration
     @Bean
     fun initFireBase(): AccessToken {
-//        val serviceAccount = FileInputStream("src/main/resources/static/styled-by-love-e-qa-firebase-adminsdk-creds.json")
+/*
+        val serviceAccount = FileInputStream("src/main/resources/static/styled-by-love-qa-firebase-adminsdk-creds.json")
+*/
 
 
-        val creds = googleCloudConfiguration.getGoogleCreds()
+//        val scoped = creds.createScoped(listOf(
+//                "https://www.googleapis.com/auth/firebase.database",
+//                "https://www.googleapis.com/auth/userinfo.email"
+//        ))
 
+        val creds = decodeCredentials(googleCloudConfiguration.privateKey)
         val scoped = creds.createScoped(listOf(
                 "https://www.googleapis.com/auth/firebase.database",
                 "https://www.googleapis.com/auth/userinfo.email"
         ))
-//        val googleCred = GoogleCredentials.fromStream(decodedCreds)
-//        val scoped = googleCred.createScoped(listOf(
-//                "https://www.googleapis.com/auth/firebase.database",
-//                "https://www.googleapis.com/auth/userinfo.email"
-//        ))
+
+
 
         val options = FirebaseOptions.Builder()
                 .setCredentials(creds)
@@ -60,9 +63,11 @@ class FireBaseConfig {
         return RestTemplate()
     }
 
-//    @Throws(IOException::class)
-//    private fun decodeCredentials(privateKey: String): GoogleCredentials {
-//        val creds =
-//        return creds
-//    }
+    @Throws(IOException::class)
+    private fun decodeCredentials(privateKey: String): GoogleCredentials {
+        val byteArrayInputStream = ByteArrayInputStream(getDecoder().decode(privateKey))
+        val creds = googleCloudConfiguration.getGoogleCreds(byteArrayInputStream)
+
+        return creds
+    }
     }
