@@ -45,6 +45,7 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
 
 
     fun getAccessToken(): RefreshTokenResponse {
+        checkTokenExpDate()
         var fireBaseDatabaseAccessTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/accessToke.json?access_token="
 
         logger.info("Calling FetchAllServices Endpoint $fireBaseDatabaseAccessTokenUrl")
@@ -53,6 +54,7 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
     }
 
     fun saveAccessToken(refreshTokenResponse: RefreshTokenResponse?) {
+        checkTokenExpDate()
 
         var fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/accessToke.json?access_token="
 
@@ -62,6 +64,8 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
     }
 
     fun saveSetmoreCustomerAppointment(styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest) {
+
+        checkTokenExpDate()
 
         val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/appointments.json?access_token=${accessToken.tokenValue}"
 
@@ -75,7 +79,7 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
     }
 
     fun saveAppointment(firebaseAppointment: FirebaseAppointment) {
-
+        checkTokenExpDate()
         val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/customer_appointments.json?access_token=${accessToken.tokenValue}"
 
         logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
