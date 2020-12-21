@@ -52,6 +52,7 @@ class FireBaseConfig {
 
         scoped.refresh()
 
+
         return scoped.accessToken
     }
 

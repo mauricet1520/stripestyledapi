@@ -1,10 +1,9 @@
 package com.styledbylovee.stripestyledapi.controller
 
 import com.styledbylovee.stripestyledapi.manager.FireBaseManager
-import com.styledbylovee.stripestyledapi.model.ActiveZipCode
-import com.styledbylovee.stripestyledapi.model.FirebaseAppointment
-import com.styledbylovee.stripestyledapi.model.Product
+import com.styledbylovee.stripestyledapi.model.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -23,6 +22,11 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
     @PostMapping("/product")
     fun addProduct(@RequestBody product: Product) {
         return fireBaseManager.saveProduct(product)
+    }
+
+    @PostMapping("/authNewUser")
+    fun authNewUser(@RequestBody fireBaseUser: FireBaseUser): ResponseEntity<FireBaseUserResponse> {
+        return fireBaseManager.authUser(fireBaseUser)
     }
 
 }

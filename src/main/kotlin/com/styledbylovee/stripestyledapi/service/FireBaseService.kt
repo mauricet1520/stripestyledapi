@@ -3,6 +3,8 @@ package com.styledbylovee.stripestyledapi.service
 import com.google.auth.oauth2.AccessToken
 import com.google.cloud.storage.*
 import com.styledbylovee.stripestyledapi.config.FireBaseConfig
+import com.styledbylovee.stripestyledapi.model.FireBaseUser
+import com.styledbylovee.stripestyledapi.model.FireBaseUserResponse
 import com.styledbylovee.stripestyledapi.model.FirebaseAppointment
 import com.styledbylovee.stripestyledapi.model.Product
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import java.io.IOException
@@ -85,6 +88,17 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
 
         restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(firebaseAppointment), StyledCustomerAppointmentRequest::class.java)
+
+    }
+
+
+    fun authUser(fireBaseUser: FireBaseUser): ResponseEntity<FireBaseUserResponse> {
+        checkTokenExpDate()
+        val fireBaseDatabaseSaveTokenUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBzmFvHq5kWmg7p7yQnoxSI-eNyHVYJR9w"
+
+        logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
+
+        return restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(fireBaseUser), FireBaseUserResponse::class.java)
 
     }
 
