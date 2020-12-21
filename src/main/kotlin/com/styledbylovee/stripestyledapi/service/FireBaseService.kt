@@ -2,6 +2,7 @@ package com.styledbylovee.stripestyledapi.service
 
 import com.google.auth.oauth2.AccessToken
 import com.google.cloud.storage.*
+import com.styledbylovee.stripestyledapi.config.FireBaseConfig
 import com.styledbylovee.stripestyledapi.model.FirebaseAppointment
 import com.styledbylovee.stripestyledapi.model.Product
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
@@ -15,17 +16,31 @@ import org.springframework.web.client.RestTemplate
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
 
 
 @Component
 class FireBaseService(@Autowired val restTemplate: RestTemplate,
                       @Autowired val accessToken: AccessToken,
-                      @Autowired val bucket: Bucket) {
+                      @Autowired val bucket: Bucket,
+                      @Autowired val fireBaseConfig: FireBaseConfig) {
 
     val logger = LoggerFactory.getLogger("FireBaseService")
 
     fun getZipCodes(): List<*>? {
+        checkTokenExpDate()
         return restTemplate.getForObject("https://styled-by-love-e-qa.firebaseio.com/zipCodes.json?access_token=${accessToken.tokenValue}", List::class.java)
+    }
+
+    private fun checkTokenExpDate() {
+        val tokenExpDate = accessToken.expirationTime
+        val currentDate = Date()
+
+        if (tokenExpDate < currentDate) {
+            fireBaseConfig.initFireBase()
+            logger.info("Current date $currentDate")
+            logger.info("tokenExpDate  $tokenExpDate")
+        }
     }
 
 

@@ -21,6 +21,7 @@ class FireBaseConfig {
 
     @Autowired
     lateinit var googleCloudConfiguration: GoogleCloudConfiguration
+
     @Bean
     fun initFireBase(): AccessToken {
 /*
