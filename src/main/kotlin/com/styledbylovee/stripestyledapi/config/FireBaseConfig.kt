@@ -51,6 +51,8 @@ class FireBaseConfig {
         FirebaseApp.initializeApp(options)
 
         scoped.refresh()
+        scoped.refreshAccessToken()
+        scoped.refreshIfExpired()
 
 
         return scoped.accessToken
