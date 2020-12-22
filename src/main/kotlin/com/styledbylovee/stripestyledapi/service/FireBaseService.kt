@@ -11,6 +11,7 @@ import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustome
 import com.styledbylovee.stripestyledapi.model.setmore.token.RefreshTokenResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
@@ -26,51 +27,54 @@ import java.util.*
 class FireBaseService(@Autowired val restTemplate: RestTemplate,
                       @Autowired val accessToken: AccessToken,
                       @Autowired val bucket: Bucket,
+                      @Value(value = "\${FIREBASE_API_KEY}") val fireBaseApiKey: String,
                       @Autowired val fireBaseConfig: FireBaseConfig) {
 
     val logger = LoggerFactory.getLogger("FireBaseService")
 
     fun getZipCodes(): List<*>? {
-        checkTokenExpDate()
-        return restTemplate.getForObject("https://styled-by-love-e-qa.firebaseio.com/zipCodes.json?access_token=${accessToken.tokenValue}", List::class.java)
+        val token = checkTokenExpDate()
+        return restTemplate.getForObject("https://styled-by-love-e-qa.firebaseio.com/zipCodes.json?access_token=${token.tokenValue}", List::class.java)
     }
 
-    private fun checkTokenExpDate() {
+    private fun checkTokenExpDate(): AccessToken {
         val tokenExpDate = accessToken.expirationTime
         val currentDate = Date()
 
         if (tokenExpDate < currentDate) {
-            fireBaseConfig.initFireBase()
+
             logger.info("Current date $currentDate")
             logger.info("tokenExpDate  $tokenExpDate")
+            return fireBaseConfig.initFireBase()
         }
+        return accessToken
     }
 
 
     fun getAccessToken(): RefreshTokenResponse {
-        checkTokenExpDate()
-        var fireBaseDatabaseAccessTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/accessToke.json?access_token="
+        val token = checkTokenExpDate()
+        val fireBaseDatabaseAccessTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/accessToke.json?access_token="
 
         logger.info("Calling FetchAllServices Endpoint $fireBaseDatabaseAccessTokenUrl")
 
-        return restTemplate.getForObject(fireBaseDatabaseAccessTokenUrl + accessToken.tokenValue, RefreshTokenResponse::class.java)!!
+        return restTemplate.getForObject(fireBaseDatabaseAccessTokenUrl + token.tokenValue, RefreshTokenResponse::class.java)!!
     }
 
     fun saveAccessToken(refreshTokenResponse: RefreshTokenResponse?) {
-        checkTokenExpDate()
+        val token = checkTokenExpDate()
 
-        var fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/accessToke.json?access_token="
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/accessToke.json?access_token="
 
         logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
 
-        restTemplate.exchange(fireBaseDatabaseSaveTokenUrl + accessToken.tokenValue, HttpMethod.PUT, HttpEntity(refreshTokenResponse!!), String::class.java)
+        restTemplate.exchange(fireBaseDatabaseSaveTokenUrl + token.tokenValue, HttpMethod.PUT, HttpEntity(refreshTokenResponse!!), String::class.java)
     }
 
     fun saveSetmoreCustomerAppointment(styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest) {
 
-        checkTokenExpDate()
+        val token = checkTokenExpDate()
 
-        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/appointments.json?access_token=${accessToken.tokenValue}"
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/appointments.json?access_token=${token.tokenValue}"
 
         logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
 
@@ -82,8 +86,8 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
     }
 
     fun saveAppointment(firebaseAppointment: FirebaseAppointment) {
-        checkTokenExpDate()
-        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/customer_appointments.json?access_token=${accessToken.tokenValue}"
+        val token = checkTokenExpDate()
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/customer_appointments.json?access_token=${token.tokenValue}"
 
         logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
 
@@ -93,12 +97,12 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
 
 
     fun authUser(fireBaseUser: FireBaseUser): ResponseEntity<FireBaseUserResponse> {
-        checkTokenExpDate()
-        val fireBaseDatabaseSaveTokenUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBzmFvHq5kWmg7p7yQnoxSI-eNyHVYJR9w"
+        val token = checkTokenExpDate()
+        val fireBaseDatabaseSaveTokenUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="
 
         logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
 
-        return restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(fireBaseUser), FireBaseUserResponse::class.java)
+        return restTemplate.exchange(fireBaseDatabaseSaveTokenUrl + fireBaseApiKey, HttpMethod.POST, HttpEntity(fireBaseUser), FireBaseUserResponse::class.java)
 
     }
 
