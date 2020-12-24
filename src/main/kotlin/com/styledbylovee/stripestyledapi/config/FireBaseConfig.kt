@@ -42,20 +42,13 @@ class FireBaseConfig {
         ))
 
 
-
         val options = FirebaseOptions.Builder()
                 .setCredentials(creds)
                 .setStorageBucket("styled-by-love-e-qa.appspot.com")
                 .setDatabaseUrl("https://styled-by-love-e-qa.firebaseio.com")
                 .build()
         FirebaseApp.initializeApp(options)
-
-        scoped.refresh()
-        scoped.refreshAccessToken()
-        scoped.refreshIfExpired()
-
-
-        return scoped.accessToken
+        return scoped.refreshAccessToken()
     }
 
     @Bean
