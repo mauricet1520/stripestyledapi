@@ -40,7 +40,6 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
     private fun checkTokenExpDate(): AccessToken {
         val tokenExpDate = accessToken.expirationTime
         val currentDate = Date()
-        accessToken.expirationTime
 
         if (tokenExpDate < currentDate) {
 
