@@ -9,6 +9,7 @@ import com.google.firebase.cloud.StorageClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Scope
 import org.springframework.web.client.RestTemplate
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
@@ -23,6 +24,7 @@ class FireBaseConfig {
     lateinit var googleCloudConfiguration: GoogleCloudConfiguration
 
     @Bean
+    @Scope("prototype")
     fun initFireBase(): AccessToken {
 /*
         val serviceAccount = FileInputStream("src/main/resources/static/styled-by-love-qa-firebase-adminsdk-creds.json")
