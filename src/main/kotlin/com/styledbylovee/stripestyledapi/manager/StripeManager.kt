@@ -2,6 +2,8 @@ package com.styledbylovee.stripestyledapi.manager
 
 import com.stripe.Stripe
 import com.stripe.model.*
+import com.stripe.param.PaymentIntentCreateParams
+import com.styledbylovee.stripestyledapi.model.StripePaymentIntentRequest
 import com.styledbylovee.stripestyledapi.model.StripeRequest
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -86,6 +88,17 @@ class StripeManager(@Value(value = "\${stripeKey}") val stripeApiKey: String,
     } catch (h: Throwable) {
         logger.error(h.message, h)
         throw h
+    }
+
+    fun createPaymentIntent(stripePaymentIntentRequest: StripePaymentIntentRequest): String {
+        Stripe.apiKey = stripeApiKey
+        val paymentIntentCreateParams = PaymentIntentCreateParams.Builder()
+                .setAmount(stripePaymentIntentRequest.amount)
+                .setCurrency("usd")
+                .build()
+
+        val paymentIntent = PaymentIntent.create(paymentIntentCreateParams)
+        return paymentIntent.clientSecret
     }
 
 }
