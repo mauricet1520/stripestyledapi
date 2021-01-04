@@ -94,6 +94,9 @@ class StripeManager(@Value(value = "\${stripeKey}") val stripeApiKey: String,
         Stripe.apiKey = stripeApiKey
         val paymentIntentCreateParams = PaymentIntentCreateParams.Builder()
                 .setAmount(stripePaymentIntentRequest.amount)
+                .setDescription("Payment for ${stripePaymentIntentRequest.email}")
+                .setReceiptEmail(stripePaymentIntentRequest.email)
+                .setCustomer(stripePaymentIntentRequest.email)
                 .setCurrency("usd")
                 .build()
 
