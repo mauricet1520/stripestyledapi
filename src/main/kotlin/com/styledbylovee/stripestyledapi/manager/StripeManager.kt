@@ -74,7 +74,6 @@ class StripeManager(@Value(value = "\${stripeKey}") val stripeApiKey: String,
 
     fun createCharge(stripeRequest: StripeRequest): String = try{
         logger.info("StripeRequest: $stripeRequest")
-
         Stripe.apiKey = stripeApiKey
 
         val params: MutableMap<String, Any> = HashMap()
@@ -96,7 +95,6 @@ class StripeManager(@Value(value = "\${stripeKey}") val stripeApiKey: String,
                 .setAmount(stripePaymentIntentRequest.amount)
                 .setDescription("Payment for ${stripePaymentIntentRequest.email}")
                 .setReceiptEmail(stripePaymentIntentRequest.email)
-                .setCustomer(stripePaymentIntentRequest.email)
                 .setCurrency("usd")
                 .build()
 
