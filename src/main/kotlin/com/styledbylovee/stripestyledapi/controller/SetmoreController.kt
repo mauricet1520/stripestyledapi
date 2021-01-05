@@ -59,6 +59,6 @@ class SetmoreController(@Autowired val setmoreManager: SetmoreManager) {
     fun createCustomerAppointment(@RequestBody styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest): ResponseEntity<Any> = try {
          ResponseEntity(setmoreManager.createCustomerAppointment(styledCustomerAppointmentRequest), HttpStatus.OK)
     }catch (h: HttpClientErrorException) {
-        ResponseEntity(h.responseBodyAsString, h.statusCode)
+        ResponseEntity(h.message, h.statusCode)
     }
 }

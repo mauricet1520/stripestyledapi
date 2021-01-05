@@ -3,10 +3,8 @@ package com.styledbylovee.stripestyledapi.service
 import com.google.auth.oauth2.AccessToken
 import com.google.cloud.storage.*
 import com.styledbylovee.stripestyledapi.config.FireBaseConfig
-import com.styledbylovee.stripestyledapi.model.FireBaseUser
-import com.styledbylovee.stripestyledapi.model.FireBaseUserResponse
-import com.styledbylovee.stripestyledapi.model.FirebaseAppointment
-import com.styledbylovee.stripestyledapi.model.Product
+import com.styledbylovee.stripestyledapi.model.*
+import com.styledbylovee.stripestyledapi.model.setmore.CustomerAppointmentResponse
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.token.RefreshTokenResponse
 import org.slf4j.LoggerFactory
@@ -70,15 +68,15 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         restTemplate.exchange(fireBaseDatabaseSaveTokenUrl + token.tokenValue, HttpMethod.PUT, HttpEntity(refreshTokenResponse!!), String::class.java)
     }
 
-    fun saveSetmoreCustomerAppointment(styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest) {
+    fun saveSetmoreCustomerAppointment(appointment: Appointment) {
 
         val token = checkTokenExpDate()
 
-        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/appointments.json?access_token=${token.tokenValue}"
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/appointments/${appointment.appointment_id}.json?access_token=${token.tokenValue}"
 
-        logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
+        logger.info("Calling Endpoint https://styled-by-love-e-qa.firebaseio.com/appointments/${appointment.appointment_id}.json?access_token=")
 
-        restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(styledCustomerAppointmentRequest), StyledCustomerAppointmentRequest::class.java)
+        restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.PUT, HttpEntity(appointment), Appointment::class.java)
     }
 
     fun upLoadPhoto() {

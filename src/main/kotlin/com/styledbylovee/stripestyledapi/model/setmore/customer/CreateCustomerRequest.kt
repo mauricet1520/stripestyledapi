@@ -7,7 +7,7 @@ data class CreateCustomerRequest(
         @JsonProperty("key")
         var key: String? = null,
 
-        @JsonProperty("first_name")
+        @JsonProperty("first_name", required = true)
         var firstName: String? = null,
         @JsonProperty("last_name")
         var lastName: String? = null,

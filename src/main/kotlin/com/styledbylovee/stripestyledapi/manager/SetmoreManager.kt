@@ -1,5 +1,7 @@
 package com.styledbylovee.stripestyledapi.manager
 
+import com.styledbylovee.stripestyledapi.model.Appointment
+import com.styledbylovee.stripestyledapi.model.setmore.CustomerAppointmentResponse
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentResponse
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
@@ -13,6 +15,7 @@ import com.styledbylovee.stripestyledapi.service.FireBaseService
 import com.styledbylovee.stripestyledapi.service.SetmoreService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
 import java.util.*
@@ -133,7 +136,13 @@ class SetmoreManager(@Autowired val setmoreService: SetmoreService, @Autowired v
 
         val globalToken = setmoreService.getAccessTokenIfFireBase().data.token.accessToken!!
 
-         setmoreService.createAppointment(globalToken, createAppointmentRequest)
+        val createAppointmentResponse =  setmoreService.createAppointment(globalToken, createAppointmentRequest)
+
+         if (createAppointmentResponse.response!!) {
+             createAppointmentResponse
+         }else {
+             throw HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, createAppointmentResponse.msg!!)
+         }
 
     }catch (h: HttpClientErrorException) {
         throw h
@@ -145,10 +154,30 @@ class SetmoreManager(@Autowired val setmoreService: SetmoreService, @Autowired v
         return setmoreService.updateAppointment(globalToken, createAppointmentRequest)
     }
 
-    fun createCustomerAppointment(styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest): CreateAppointmentResponse = try {
+    fun createCustomerAppointment(styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest): Appointment = try {
         val createCustomerResponse = createSetmoreCustomer(styledCustomerAppointmentRequest.createCustomerRequest)
-        fireBaseService.saveSetmoreCustomerAppointment(styledCustomerAppointmentRequest)
-        createAppointment(styledCustomerAppointmentRequest.createAppointmentRequest!!)
+
+        styledCustomerAppointmentRequest.createAppointmentRequest?.customerKey = createCustomerResponse.data?.customer?.key
+        val createAppointmentResponse = createAppointment(styledCustomerAppointmentRequest.createAppointmentRequest!!)
+
+        val appointment = Appointment(
+                appointment_id = createAppointmentResponse.data?.appointment?.key,
+                setmore_appointment_key = createAppointmentResponse.data?.appointment?.key,
+                setmore_customer_key = createCustomerResponse.data?.customer?.key,
+                setmore_label = createAppointmentResponse.data?.appointment?.label,
+                setmore_service_key = createAppointmentResponse.data?.appointment?.serviceKey,
+                setmore_staff_key = createAppointmentResponse.data?.appointment?.staffKey,
+                start_time = createAppointmentResponse.data?.appointment?.startTime,
+                end_time = createAppointmentResponse.data?.appointment?.endTime,
+                street_address = createCustomerResponse.data?.customer?.address,
+                city = createCustomerResponse.data?.customer?.city,
+                state = createCustomerResponse.data?.customer?.address,
+                stylist_id = createAppointmentResponse.data?.appointment?.staffKey
+                )
+
+        fireBaseService.saveSetmoreCustomerAppointment(appointment)
+        appointment
+
     } catch (h: HttpClientErrorException) {
         throw h
     }

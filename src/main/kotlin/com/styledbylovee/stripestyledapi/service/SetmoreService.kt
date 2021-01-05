@@ -218,7 +218,7 @@ class SetmoreService(
 
     fun createAppointment(token: String, createAppointmentRequest: CreateAppointmentRequest): CreateAppointmentResponse {
 
-        logger.info("Method: createSetmoreCustomer token $token")
+        logger.info("Method: createSetmoreCustomer token")
 
         val createAppointmentUrl = "https://developer.setmore.com/api/v1/bookingapi/appointment/create"
 
