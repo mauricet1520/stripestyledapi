@@ -1,6 +1,7 @@
 package com.styledbylovee.stripestyledapi.controller
 
 import com.styledbylovee.stripestyledapi.manager.SetmoreManager
+import com.styledbylovee.stripestyledapi.model.Appointment
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.CreateAppointmentResponse
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
@@ -56,9 +57,7 @@ class SetmoreController(@Autowired val setmoreManager: SetmoreManager) {
     }
 
     @PostMapping("createSetmoreCustomerAppointment")
-    fun createCustomerAppointment(@RequestBody styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest): ResponseEntity<Any> = try {
-         ResponseEntity(setmoreManager.createCustomerAppointment(styledCustomerAppointmentRequest), HttpStatus.OK)
-    }catch (h: HttpClientErrorException) {
-        ResponseEntity(h.message, h.statusCode)
+    fun createCustomerAppointment(@RequestBody styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest): Appointment {
+        return setmoreManager.createCustomerAppointment(styledCustomerAppointmentRequest)
     }
 }

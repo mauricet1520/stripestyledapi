@@ -176,6 +176,7 @@ class SetmoreManager(@Autowired val setmoreService: SetmoreService, @Autowired v
                 )
 
         fireBaseService.saveSetmoreCustomerAppointment(appointment)
+        logger.info("Appointment: $appointment")
         appointment
 
     } catch (h: HttpClientErrorException) {
