@@ -138,7 +138,10 @@ class SetmoreManager(@Autowired val setmoreService: SetmoreService, @Autowired v
 
         val createAppointmentResponse =  setmoreService.createAppointment(globalToken, createAppointmentRequest)
 
+        logger.info("CreateAppointmentRequest: $createAppointmentRequest")
          if (createAppointmentResponse.response!!) {
+             logger.info("CreateAppointmentRequest: $createAppointmentRequest")
+
              createAppointmentResponse
          }else {
              throw HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, createAppointmentResponse.msg!!)
