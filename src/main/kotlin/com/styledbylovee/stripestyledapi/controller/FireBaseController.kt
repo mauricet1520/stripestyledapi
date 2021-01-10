@@ -34,4 +34,9 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
         return fireBaseManager.addCustomer(firebaseCustomer)
     }
 
+    @PostMapping("/validEmail")
+    fun addValidEmail(@RequestBody validZipCodeEmail: ValidZipCodeEmail) {
+        fireBaseManager.addValidEmail(validZipCodeEmail)
+    }
+
 }
