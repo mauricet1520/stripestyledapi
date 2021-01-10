@@ -113,6 +113,18 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(product), StyledCustomerAppointmentRequest::class.java)
     }
 
+    fun addCustomer(firebaseCustomer: FirebaseCustomer): FirebaseCustomer {
+
+        val token = checkTokenExpDate()
+
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/customers/${firebaseCustomer.uid}.json?access_token=${token.tokenValue}"
+
+        logger.info("Calling Endpoint https://styled-by-love-e-qa.firebaseio.com/customers/${firebaseCustomer.uid}.json?access_token=")
+
+        return restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.PUT, HttpEntity(firebaseCustomer), FirebaseCustomer::class.java).body!!
+
+    }
+
     object UploadObject {
         @Throws(IOException::class)
         fun uploadObject(

@@ -1,9 +1,6 @@
 package com.styledbylovee.stripestyledapi.manager
 
-import com.styledbylovee.stripestyledapi.model.FireBaseUser
-import com.styledbylovee.stripestyledapi.model.FireBaseUserResponse
-import com.styledbylovee.stripestyledapi.model.FirebaseAppointment
-import com.styledbylovee.stripestyledapi.model.Product
+import com.styledbylovee.stripestyledapi.model.*
 import com.styledbylovee.stripestyledapi.service.FireBaseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -36,5 +33,11 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService) {
     fun authUser(fireBaseUser: FireBaseUser): ResponseEntity<FireBaseUserResponse> {
 
         return fireBaseService.authUser(fireBaseUser)
+    }
+
+    fun addCustomer(firebaseCustomer: FirebaseCustomer): FirebaseCustomer {
+
+        return fireBaseService.addCustomer(firebaseCustomer)
+
     }
 }

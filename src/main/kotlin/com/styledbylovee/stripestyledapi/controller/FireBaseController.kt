@@ -29,4 +29,9 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
         return fireBaseManager.authUser(fireBaseUser)
     }
 
+    @PostMapping("/customer")
+    fun addCustomer(@RequestBody firebaseCustomer: FirebaseCustomer): FirebaseCustomer {
+        return fireBaseManager.addCustomer(firebaseCustomer)
+    }
+
 }
