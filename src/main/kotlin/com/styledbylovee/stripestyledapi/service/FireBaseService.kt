@@ -137,6 +137,21 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.PUT, HttpEntity(validZipCodeEmail), ValidZipCodeEmail::class.java).body!!
     }
 
+    fun addInvalidEmail(invalidEmail: InvalidZipCodeEmail) {
+
+        val token = checkTokenExpDate()
+
+        val firstPartOfEmail = invalidEmail.email.split("@")
+
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/invalid-email-list/${firstPartOfEmail[0]}.json?access_token=${token.tokenValue}"
+
+        logger.info("Calling Endpoint https://styled-by-love-e-qa.firebaseio.com/invalid-email-list/${firstPartOfEmail[0]}.json?access_token=")
+
+        restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.PUT, HttpEntity(invalidEmail), InvalidZipCodeEmail::class.java).body!!
+
+    }
+
+
     object UploadObject {
         @Throws(IOException::class)
         fun uploadObject(

@@ -39,4 +39,10 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
         fireBaseManager.addValidEmail(validZipCodeEmail)
     }
 
+
+    @PostMapping("/inValidEmail")
+    fun addInvalidEmail(@RequestBody invalidEmail: InvalidZipCodeEmail) {
+        fireBaseManager.addInvalidEmail(invalidEmail)
+    }
+
 }
