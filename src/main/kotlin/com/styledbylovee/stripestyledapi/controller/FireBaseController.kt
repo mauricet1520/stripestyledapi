@@ -45,4 +45,14 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
         fireBaseManager.addInvalidEmail(invalidEmail)
     }
 
+    @GetMapping("/getAppointment")
+    fun getAppointment(@RequestParam(value = "appointmentId")appointmentId: String): Appointment {
+        return fireBaseManager.getAppointment(appointmentId)
+    }
+
+    @PostMapping("/updateAppointmentInFB")
+    fun updateAppointment(@RequestBody appointment: Appointment) {
+        return fireBaseManager.updateAppointment(appointment)
+    }
+
 }

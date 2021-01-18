@@ -238,7 +238,7 @@ class SetmoreService(
             response.body!!
 
         } catch (e: HttpClientErrorException) {
-            logger.error("Failure when calling create customer endpoint", e)
+            logger.error("Failure when calling create appointment endpoint", e)
 
             val refreshTokenResponse = refreshToken()
 

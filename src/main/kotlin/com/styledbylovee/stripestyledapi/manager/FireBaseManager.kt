@@ -68,4 +68,12 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
         fireBaseService.addInvalidEmail(invalidEmail)
 
     }
+
+    fun getAppointment(appointmentId: String): Appointment {
+        return fireBaseService.getAppointment(appointmentId)
+    }
+
+    fun updateAppointment(appointment: Appointment) {
+        fireBaseService.saveSetmoreCustomerAppointment(appointment)
+    }
 }
