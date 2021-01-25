@@ -50,9 +50,21 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
         return fireBaseManager.getAppointment(appointmentId)
     }
 
+    @GetMapping("/getCustomer")
+    fun getCustomer(@RequestParam(value = "customerId")customerId: String): FirebaseCustomer {
+        return fireBaseManager.getCustomer(customerId)
+    }
+
+    @GetMapping("/getCustomerAppointment")
+    fun getCustomerAppointment(@RequestParam(value = "customerId")customerId: String): MutableList<Appointment> {
+        return fireBaseManager.getCustomerAppointment(customerId)
+    }
+
     @PostMapping("/updateAppointmentInFB")
     fun updateAppointment(@RequestBody appointment: Appointment) {
         return fireBaseManager.updateAppointment(appointment)
     }
+
+
 
 }

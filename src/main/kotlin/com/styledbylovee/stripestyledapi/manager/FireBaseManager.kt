@@ -1,6 +1,7 @@
 package com.styledbylovee.stripestyledapi.manager
 
 import com.styledbylovee.stripestyledapi.model.*
+import com.styledbylovee.stripestyledapi.model.setmore.CustomerAppointmentResponse
 import com.styledbylovee.stripestyledapi.service.FireBaseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -73,7 +74,23 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
         return fireBaseService.getAppointment(appointmentId)
     }
 
+    fun getCustomer(uuid: String): FirebaseCustomer {
+        return fireBaseService.getCustomer(uuid)
+    }
+
     fun updateAppointment(appointment: Appointment) {
         fireBaseService.saveSetmoreCustomerAppointment(appointment)
     }
+
+    fun getCustomerAppointment(customerId: String): MutableList<Appointment> {
+        val customer = fireBaseService.getCustomer(customerId)
+        val appointments = mutableListOf<Appointment>()
+        customer.appointment_ids?.forEach {
+            val app = fireBaseService.getAppointment(it)
+            appointments.add(app)
+        }
+        return appointments
+    }
+
+
 }
