@@ -60,4 +60,15 @@ class SetmoreController(@Autowired val setmoreManager: SetmoreManager) {
     fun createCustomerAppointment(@RequestBody styledCustomerAppointmentRequest: StyledCustomerAppointmentRequest): Appointment {
         return setmoreManager.createCustomerAppointment(styledCustomerAppointmentRequest)
     }
+
+    @GetMapping("/fetchAppointments")
+    fun fetchAppointments(@RequestParam(value = "start_time") start_time: String, @RequestParam(value = "end_time") end_time: String): CreateAppointmentResponse {
+        return setmoreManager.fetchAppointments(start_time, end_time)
+    }
+
+    @GetMapping("/fetchAllAppointments")
+    fun fetchAllAppointments(@RequestParam(value = "start_time") start_time: String, @RequestParam(value = "end_time") end_time: String, @RequestParam(value = "staff_key") staff_key: String): CreateAppointmentResponse {
+        return setmoreManager.fetchAllAppointments(start_time, end_time, staff_key)
+    }
+
 }

@@ -174,7 +174,7 @@ class SetmoreManager(@Autowired val setmoreService: SetmoreService, @Autowired v
                 end_time = createAppointmentResponse.data?.appointment?.endTime,
                 street_address = createCustomerResponse.data?.customer?.address,
                 city = createCustomerResponse.data?.customer?.city,
-                state = createCustomerResponse.data?.customer?.address,
+                state = createCustomerResponse.data?.customer?.state,
                 stylist_id = createAppointmentResponse.data?.appointment?.staffKey
                 )
 
@@ -273,5 +273,15 @@ class SetmoreManager(@Autowired val setmoreService: SetmoreService, @Autowired v
             if (fourteenSixteenTimeSlots.size >= 5) staffTimeSlot.fourteenToSixteenTimeSlotsAvailable = true
 
         return staffTimeSlot
+    }
+
+    fun fetchAppointments(start_time: String, end_time: String) :CreateAppointmentResponse {
+        val globalToken = setmoreService.getAccessTokenIfFireBase().data.token.accessToken!!
+        return setmoreService.fetchAppointments(globalToken, start_time, end_time)
+    }
+
+    fun fetchAllAppointments(start_time: String, end_time: String, staff_key: String) :CreateAppointmentResponse {
+        val globalToken = setmoreService.getAccessTokenIfFireBase().data.token.accessToken!!
+        return setmoreService.fetchAllAppointments(globalToken, start_time, end_time, staff_key)
     }
 }

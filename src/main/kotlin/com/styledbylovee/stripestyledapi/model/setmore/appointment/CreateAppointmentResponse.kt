@@ -14,5 +14,8 @@ data class CreateAppointmentResponse (
 
 data class Data (
     @JsonProperty("appointment")
-    var appointment: Appointment? = null
+    var appointment: Appointment? = null,
+
+    @JsonProperty("appointments")
+    var appointments: List<Appointment>? = null
 )

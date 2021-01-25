@@ -274,6 +274,55 @@ class SetmoreService(
 
     }
 
+    fun fetchAppointments(token: String, start_time: String, end_time: String): CreateAppointmentResponse {
+        logger.info("Method: updateAppointment token $token")
+        val staff_key = "r3c261497393251170"
+
+        val updateAppointmentUrl = "https://developer.setmore.com/api/v1/bookingapi/appointments?startDate=${start_time}&endDate=${end_time}"
+
+        return try {
+            val headers = HttpHeaders()
+
+            headers.add("Authorization", "Bearer $token")
+
+            logger.info("Calling Services Endpoint $updateAppointmentUrl")
+            val entity = HttpEntity<Any>(headers)
+
+
+            val response = restTemplate.exchange(updateAppointmentUrl, HttpMethod.GET, entity, CreateAppointmentResponse::class.java)
+
+            logger.info("CreateAppointmentResponse code: ${response?.statusCode}")
+
+            response.body!!
+
+        } catch (e: HttpClientErrorException) {
+            logger.error("Failure when calling update appointment endpoint", e)
+
+            val refreshTokenResponse = refreshToken()
+
+            val freshToken = refreshTokenResponse.data.token.accessToken
+
+            val headers = HttpHeaders()
+
+            headers.add("Authorization", "Bearer $freshToken")
+            val entity = HttpEntity<Any>(headers)
+
+
+            logger.info("Calling Services Endpoint $updateAppointmentUrl")
+
+            val response = restTemplate.exchange(updateAppointmentUrl, HttpMethod.GET, entity, CreateAppointmentResponse::class.java)
+
+            logger.info("CreateAppointmentResponse code: ${response.statusCode}")
+
+            response.body!!
+
+        } catch (x: Exception) {
+            logger.error("Failure updating Appointment", x)
+
+            return CreateAppointmentResponse(response = false)
+        }
+    }
+
     fun updateAppointment(token: String, createAppointmentRequest: CreateAppointmentRequest): CreateAppointmentResponse {
 
         logger.info("Method: updateAppointment token $token")
@@ -323,7 +372,59 @@ class SetmoreService(
 
     }
 
+    fun fetchAllAppointments(token: String, startTime: String, endTime: String, staffKey: String): CreateAppointmentResponse {
+
+        logger.info("Method: updateAppointment token $token")
+
+        val updateAppointmentUrl = "https://developer.setmore.com/api/v1/bookingapi/appointments?startDate=${startTime}&endDate=${endTime}&staff_key=${staffKey}"
+
+        return try {
+            val headers = HttpHeaders()
+
+            headers.add("Authorization", "Bearer $token")
+
+            logger.info("Calling Services Endpoint $updateAppointmentUrl")
+            val entity = HttpEntity<Any>(headers)
+
+
+            val response = restTemplate.exchange(updateAppointmentUrl, HttpMethod.GET, entity, CreateAppointmentResponse::class.java)
+
+            logger.info("CreateAppointmentResponse code: ${response.statusCode}")
+
+            response.body!!
+
+        } catch (e: HttpClientErrorException) {
+            logger.error("Failure when calling update appointment endpoint", e)
+
+            val refreshTokenResponse = refreshToken()
+
+            val freshToken = refreshTokenResponse.data.token.accessToken
+
+            val headers = HttpHeaders()
+
+            headers.add("Authorization", "Bearer $freshToken")
+            val entity = HttpEntity<Any>(headers)
+
+
+            logger.info("Calling Services Endpoint $updateAppointmentUrl")
+
+            val response = restTemplate.exchange(updateAppointmentUrl, HttpMethod.GET, entity, CreateAppointmentResponse::class.java)
+
+            logger.info("CreateAppointmentResponse code: ${response.statusCode}")
+
+            response.body!!
+
+        } catch (x: Exception) {
+            logger.error("Failure updating Appointment", x)
+
+            return CreateAppointmentResponse(response = false)
+        }
+
+    }
+
 }
+
+
 
 private fun createHeader(token: String): HttpEntity<Any> {
 
