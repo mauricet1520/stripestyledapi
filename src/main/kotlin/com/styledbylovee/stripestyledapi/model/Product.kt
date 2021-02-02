@@ -3,7 +3,7 @@ package com.styledbylovee.stripestyledapi.model
 data class Product (
         var date: String,
         var cost: Long,
-        var transaction_number: Long,
+        var transaction_number: String,
         var store_name: String,
         var item_type: String,
         var item_image_url: String,

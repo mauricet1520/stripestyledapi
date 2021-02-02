@@ -105,8 +105,9 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
     }
 
     fun saveProduct(product: Product) {
+        val token = checkTokenExpDate()
 
-        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/product.json?access_token=${accessToken.tokenValue}"
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/product.json?access_token=${token.tokenValue}"
 
         logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
 

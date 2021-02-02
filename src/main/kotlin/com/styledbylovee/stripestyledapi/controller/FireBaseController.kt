@@ -66,5 +66,14 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
     }
 
 
+    @PostMapping("/calculateProducts")
+    fun calculateProducts(@RequestBody costs: List<Double>): Double {
+        return fireBaseManager.calculateProducts(costs)
+    }
+
+    @PostMapping("/saveAllProducts")
+    fun saveAllProducts(@RequestBody products: List<Product>) {
+        return fireBaseManager.saveAllProducts(products)
+    }
 
 }

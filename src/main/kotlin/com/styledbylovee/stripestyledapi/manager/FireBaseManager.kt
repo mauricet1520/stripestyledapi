@@ -9,12 +9,15 @@ import org.springframework.http.ResponseEntity
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
+import java.math.RoundingMode
+import java.util.*
 
 @Component
 class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
                       @Autowired val emailSender: JavaMailSender,
                       @Autowired val template: SimpleMailMessage,
-                      @Value(value = "\${EMAIL_USERNAME}") val emailUsername: String) {
+                      @Value(value = "\${EMAIL_USERNAME}") val emailUsername: String,
+                      @Value(value = "\${SALES_TAX}") val salesTax: Double) {
 
     fun findZipCode(zipCode: Int): Boolean {
         val zipCodeList = fireBaseService.getZipCodes()
@@ -90,6 +93,30 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
             appointments.add(app)
         }
         return appointments
+    }
+
+    fun calculateProducts(costs: List<Double>): Double {
+        var totalCost = 0.0
+        costs.forEach {
+            totalCost += it
+        }
+         val tax =  totalCost * salesTax
+        return totalCost.plus(tax)
+    }
+
+    fun saveAllProducts(products: List<Product>) {
+        val firebaseCustomer = getCustomer(products[0].firebase_customer_id)
+        val firebaseAppointment = getAppointment(products[0].firebase_appointment_id)
+        val transactionNumber = UUID.randomUUID()
+
+        products.forEach {
+            it.setmore_customer_key = firebaseCustomer.setmore_customer_id!!
+            it.setmore_staff_key = firebaseAppointment.setmore_staff_key!!
+            it.firebase_stylist_id = firebaseAppointment.setmore_staff_key!!
+            it.setmore_service_key = firebaseAppointment.setmore_service_key!!
+            it.transaction_number = transactionNumber.toString()
+            fireBaseService.saveProduct(it)
+        }
     }
 
 
