@@ -119,5 +119,12 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
         }
     }
 
+    fun saveProductInTransaction(transaction: Transaction) {
+        fireBaseService.saveProductInTransaction(transaction)
+    }
+
+    fun getProductsInTransaction(transactionNumber: String): Transaction? {
+        return fireBaseService.getProductsInTransaction(transactionNumber)
+    }
 
 }

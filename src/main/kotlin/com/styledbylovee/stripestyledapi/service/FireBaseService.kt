@@ -19,6 +19,7 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 @Component
@@ -112,6 +113,30 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
 
         restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(product), StyledCustomerAppointmentRequest::class.java)
+    }
+
+    fun saveProductInTransaction(transaction: Transaction) {
+        val token = checkTokenExpDate()
+
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/transactions/${transaction.transaction_number}.json?access_token=${token.tokenValue}"
+        val transactionInFb = getProductsInTransaction(transaction.transaction_number)
+        val productInFB = ArrayList<Product>()
+        if (transactionInFb != null) {
+            productInFB.addAll(transactionInFb.products)
+            productInFB.addAll(transaction.products)
+            transactionInFb.products = productInFB
+            logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
+            restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.PUT, HttpEntity(transactionInFb), StyledCustomerAppointmentRequest::class.java)
+        } else {
+            logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
+            restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.PUT, HttpEntity(transaction), StyledCustomerAppointmentRequest::class.java)
+        }
+    }
+
+    fun getProductsInTransaction(transactionNumber: String): Transaction? {
+        val token = checkTokenExpDate()
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/transactions/$transactionNumber.json?access_token=${token.tokenValue}"
+        return restTemplate.getForObject(fireBaseDatabaseSaveTokenUrl, Transaction::class.java)
     }
 
     fun addCustomer(firebaseCustomer: FirebaseCustomer): FirebaseCustomer {

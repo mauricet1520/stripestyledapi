@@ -76,4 +76,14 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
         return fireBaseManager.saveAllProducts(products)
     }
 
+    @PostMapping("/saveProductInTransaction")
+    fun saveProductInTransaction(@RequestBody transaction: Transaction) {
+        return fireBaseManager.saveProductInTransaction(transaction)
+    }
+
+    @GetMapping("/getProductsInTransaction")
+    fun getProductsInTransaction(@RequestParam("transaction_number") transactionNumber: String): Transaction? {
+        return fireBaseManager.getProductsInTransaction(transactionNumber)
+    }
+
 }

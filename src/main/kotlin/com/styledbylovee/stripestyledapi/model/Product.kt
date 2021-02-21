@@ -8,6 +8,7 @@ data class Product (
         var item_type: String,
         var item_image_url: String,
         var sku_image_url: String,
+        var sku_number: String,
 
         var setmore_appointment_key: String,
         var setmore_staff_key: String,
