@@ -1,5 +1,6 @@
 package com.styledbylovee.stripestyledapi.controller
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.styledbylovee.stripestyledapi.manager.FireBaseManager
 import com.styledbylovee.stripestyledapi.model.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -84,6 +85,17 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
     @GetMapping("/getProductsInTransaction")
     fun getProductsInTransaction(@RequestParam("transaction_number") transactionNumber: String): Transaction? {
         return fireBaseManager.getProductsInTransaction(transactionNumber)
+    }
+
+    @PutMapping("/deleteProductInTransaction")
+    fun deleteProductInTransaction(@RequestParam("transaction_number") transactionNumber: String,
+                                   @RequestParam("sku") sku: String): Transaction? {
+        return fireBaseManager.deleteProductInTransaction(transactionNumber, sku)
+    }
+
+    @GetMapping("/getAllProducts")
+    fun getAllProducts(): Any {
+        return fireBaseManager.getAllProducts() ?: Any()
     }
 
 }

@@ -1,10 +1,10 @@
 package com.styledbylovee.stripestyledapi.service
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.google.auth.oauth2.AccessToken
 import com.google.cloud.storage.*
 import com.styledbylovee.stripestyledapi.config.FireBaseConfig
 import com.styledbylovee.stripestyledapi.model.*
-import com.styledbylovee.stripestyledapi.model.setmore.CustomerAppointmentResponse
 import com.styledbylovee.stripestyledapi.model.setmore.appointment.StyledCustomerAppointmentRequest
 import com.styledbylovee.stripestyledapi.model.setmore.token.RefreshTokenResponse
 import org.slf4j.LoggerFactory
@@ -19,7 +19,6 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 @Component
@@ -115,16 +114,46 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.POST, HttpEntity(product), StyledCustomerAppointmentRequest::class.java)
     }
 
+    fun deleteProductInTransaction(transactionNumber: String, sku: String): Transaction? {
+        val token = checkTokenExpDate()
+
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/transactions/${transactionNumber}.json?access_token=${token.tokenValue}"
+
+        val transactionInFB = getTransactionInFB(transactionNumber)
+        var productInFB = mutableListOf<Product>()
+
+        if (transactionInFB?.products != null) {
+
+            transactionInFB.products?.forEach {
+                if (it.sku_number != sku) {
+                    productInFB.add(it)
+                }
+            }
+
+        }
+
+
+        transactionInFB?.products = productInFB
+        if (transactionInFB != null) {
+            logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
+            restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.PUT, HttpEntity(transactionInFB), StyledCustomerAppointmentRequest::class.java)
+        }
+
+        return transactionInFB
+    }
+
     fun saveProductInTransaction(transaction: Transaction) {
         val token = checkTokenExpDate()
 
         val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/transactions/${transaction.transaction_number}.json?access_token=${token.tokenValue}"
-        val transactionInFb = getProductsInTransaction(transaction.transaction_number)
-        val productInFB = ArrayList<Product>()
-        if (transactionInFb != null) {
-            productInFB.addAll(transactionInFb.products)
-            productInFB.addAll(transaction.products)
-            transactionInFb.products = productInFB
+        val transactionInFb = getTransactionInFB(transaction.transaction_number)
+        var productsInTransaction = mutableListOf<Product>()
+
+
+        if (transactionInFb?.products != null ) {
+            productsInTransaction.addAll(transaction.products!!)
+            productsInTransaction.addAll(transactionInFb.products!!)
+            transactionInFb.products = productsInTransaction
             logger.info("Calling Endpoint $fireBaseDatabaseSaveTokenUrl")
             restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.PUT, HttpEntity(transactionInFb), StyledCustomerAppointmentRequest::class.java)
         } else {
@@ -133,10 +162,14 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         }
     }
 
-    fun getProductsInTransaction(transactionNumber: String): Transaction? {
+    fun getTransactionInFB(transactionNumber: String): Transaction? {
         val token = checkTokenExpDate()
         val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/transactions/$transactionNumber.json?access_token=${token.tokenValue}"
-        return restTemplate.getForObject(fireBaseDatabaseSaveTokenUrl, Transaction::class.java)
+        val transaction = restTemplate.getForObject(fireBaseDatabaseSaveTokenUrl, Transaction::class.java)
+        if (transaction != null) {
+            return transaction
+        }
+        return null
     }
 
     fun addCustomer(firebaseCustomer: FirebaseCustomer): FirebaseCustomer {
@@ -196,6 +229,17 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
         logger.info("Calling Endpoint https://styled-by-love-e-qa.firebaseio.com/customers/${uid}.json?access_token=")
 
         return restTemplate.exchange(fireBaseDatabaseSaveTokenUrl, HttpMethod.GET, null, FirebaseCustomer::class.java).body!!
+    }
+
+    fun getAllProducts(): JsonNode? {
+        val token = checkTokenExpDate()
+
+        val fireBaseDatabaseSaveTokenUrl = "https://styled-by-love-e-qa.firebaseio.com/product.json?access_token=${token.tokenValue}"
+
+        logger.info("Calling Endpoint https://styled-by-love-e-qa.firebaseio.com/product.json?access_token=")
+
+        return restTemplate.getForObject(fireBaseDatabaseSaveTokenUrl, JsonNode::class.java)
+
     }
 
 

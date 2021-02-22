@@ -1,7 +1,7 @@
 package com.styledbylovee.stripestyledapi.manager
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.styledbylovee.stripestyledapi.model.*
-import com.styledbylovee.stripestyledapi.model.setmore.CustomerAppointmentResponse
 import com.styledbylovee.stripestyledapi.service.FireBaseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Component
-import java.math.RoundingMode
 import java.util.*
 
 @Component
@@ -124,7 +123,33 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
     }
 
     fun getProductsInTransaction(transactionNumber: String): Transaction? {
-        return fireBaseService.getProductsInTransaction(transactionNumber)
+
+        var transaction =  fireBaseService.getTransactionInFB(transactionNumber)
+        val cost = mutableListOf<Double>()
+        transaction?.products?.forEach {
+            cost.add(it.cost)
+        }
+        val totalCost = calculateProducts(cost)
+        transaction?.totalCost = totalCost
+
+        return transaction
+    }
+
+    fun deleteProductInTransaction(transactionNumber: String, sku: String): Transaction? {
+        val transaction = fireBaseService.deleteProductInTransaction(transactionNumber, sku)
+        val cost = mutableListOf<Double>()
+        transaction?.products?.forEach {
+            cost.add(it.cost)
+        }
+        val totalCost = calculateProducts(cost)
+        transaction?.totalCost = totalCost
+
+        return transaction
+    }
+
+    fun getAllProducts(): JsonNode? {
+
+        return fireBaseService.getAllProducts()
     }
 
 }
