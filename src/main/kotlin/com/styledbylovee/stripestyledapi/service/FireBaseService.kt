@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
@@ -240,6 +241,19 @@ class FireBaseService(@Autowired val restTemplate: RestTemplate,
 
         return restTemplate.getForObject(fireBaseDatabaseSaveTokenUrl, JsonNode::class.java)
 
+    }
+
+    fun addEmailToMailChimp(mailChimpEmailRequest: MailChimpEmailRequest): ResponseEntity<JsonNode> {
+
+        val mailChimpUrl = "https://us4.api.mailchimp.com/3.0/lists/b067bb4d60/members?skip_merge_validation=false"
+
+        val headers = HttpHeaders()
+
+        headers.add("Authorization", "apikey b24d0ff46eeec03747e29b8a6ca87322-us4")
+
+        val entity = HttpEntity<Any>(mailChimpEmailRequest, headers)
+
+        return restTemplate.exchange(mailChimpUrl, HttpMethod.POST, entity,JsonNode::class.java)
     }
 
 

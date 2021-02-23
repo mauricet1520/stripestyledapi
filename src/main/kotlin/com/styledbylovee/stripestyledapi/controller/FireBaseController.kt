@@ -98,4 +98,10 @@ class FireBaseController(@Autowired val fireBaseManager: FireBaseManager) {
         return fireBaseManager.getAllProducts() ?: Any()
     }
 
+    @PostMapping("/addEmailToMailChimp")
+    fun addEmailToMailChimp(@RequestBody mailChimpEmailRequest: MailChimpEmailRequest): ResponseEntity<JsonNode> {
+
+        return fireBaseManager.addEmailToMailChimp(mailChimpEmailRequest)
+    }
+
 }

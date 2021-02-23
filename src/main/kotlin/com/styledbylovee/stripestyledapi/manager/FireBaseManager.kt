@@ -152,4 +152,9 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
         return fireBaseService.getAllProducts()
     }
 
+    fun addEmailToMailChimp(mailChimpEmailRequest: MailChimpEmailRequest): ResponseEntity<JsonNode> {
+
+        return fireBaseService.addEmailToMailChimp(mailChimpEmailRequest)
+    }
+
 }
