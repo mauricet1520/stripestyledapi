@@ -124,7 +124,9 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
 
     fun getProductsInTransaction(transactionNumber: String): Transaction? {
 
-        var transaction =  fireBaseService.getTransactionInFB(transactionNumber)
+        var transaction: Transaction? = fireBaseService.getTransactionInFB(transactionNumber)
+                ?: return Transaction(transaction_number = transactionNumber, totalCost = 0.0)
+
         val cost = mutableListOf<Double>()
         transaction?.products?.forEach {
             cost.add(it.cost)
