@@ -119,22 +119,18 @@ class FireBaseManager(@Autowired val fireBaseService: FireBaseService,
     }
 
     fun saveProductInTransaction(transaction: Transaction) {
+        val cost = mutableListOf<Double>()
+        transaction.products?.forEach {
+            cost.add(it.cost)
+        }
+        val totalCost = calculateProducts(cost)
+        transaction.totalCost = totalCost
         fireBaseService.saveProductInTransaction(transaction)
     }
 
     fun getProductsInTransaction(transactionNumber: String): Transaction? {
-
-        var transaction: Transaction? = fireBaseService.getTransactionInFB(transactionNumber)
+        return fireBaseService.getTransactionInFB(transactionNumber)
                 ?: return Transaction(transaction_number = transactionNumber, totalCost = 0.0)
-
-        val cost = mutableListOf<Double>()
-        transaction?.products?.forEach {
-            cost.add(it.cost)
-        }
-        val totalCost = calculateProducts(cost)
-        transaction?.totalCost = totalCost
-
-        return transaction
     }
 
     fun deleteProductInTransaction(transactionNumber: String, sku: String): Transaction? {
