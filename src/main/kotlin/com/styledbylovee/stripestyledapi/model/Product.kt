@@ -1,14 +1,14 @@
 package com.styledbylovee.stripestyledapi.model
 
 data class Product (
-        var date: String,
-        var cost: Double,
-        var transaction_number: String,
-        var store_name: String,
+        var date: String?,
+        var cost: Double = 0.0,
+        var transaction_number: String?,
+        var store_name: String?,
         var item_type: String,
-        var item_image_url: String,
-        var sku_image_url: String,
-        var sku_number: String,
+        var item_image_url: String?,
+        var sku_image_url: String?,
+        var sku_number: String?,
         var name: String?,
 
         var setmore_appointment_key: String,
